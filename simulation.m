@@ -1,8 +1,8 @@
 function [average] = simulation(RegulationPeriod, RegulationDuty, CarEntranceInterval)
 
-RoadLength = 10; % length of approaching road segments
+RoadLength = 60; % length of approaching road segments
 RoadCount = 4; % number of roads approaching the intersection
-RoundLength = 20; % length of roundabout
+RoundLength = 40; % length of roundabout
 
 InitialVelocity = 0;
 MaxVelocity = 4; % maximum discretized velocity on the road
@@ -33,25 +33,25 @@ currentCarCount = 0;
 
 while length(OutputResults) < TerminalCarCount
     [roads, currentCarCount] = addCars(roads, currentCarCount, t, InitialVelocity, CarEntranceInterval);
-    
+
     round = incrementRoundVelocity(round, MaxVelocity);
-    
+
     roundGap = calculateRoundGap(round, RoadCount);
     round = adjustRoundVelocity(round, roundGap);
-    
+
     [round, OutputResults] = incrementRoundPosition(round, OutputResults, RoadCount);
-    
+
     roads = incrementRoadVelocity(roads, MaxVelocity);
-    
+
     roadGap = calculateRoadGap(roads, round);
     regulation = calculateRegulatedGap(roads, t, RegulationPeriod, RegulationDuty);
     [roads, round] = adjustRoadVelocity(roads, round, roadGap, regulation);
-    
+
     [roads, round] = incrementRoadPosition(roads, round);
-    
+
     [roads, round] = incrementTime(roads, round);
     t = t + 1;
-    
+
 end
 
 sum = 0;

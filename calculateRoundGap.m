@@ -1,22 +1,23 @@
 function [roundGap] = calculateRoundGap(round, RoadCount)
 
 roundGap = zeros(size(round));
-SegmentLength = (length(round) / RoadCount);
+RoundLength = length(round);
+SegmentLength = RoundLength / RoadCount;
 
-for j = 0:(RoadCount - 1)
-    for k = 1:SegmentLength
-        if round(j * SegmentLength + k).position == 1
-            if k == SegmentLength
-                roundGap(j * SegmentLength + k) = inf;
+for j = 1:RoundLength
+    if round(j).position == 1
+        for k = 1:RoundLength
+            currentIndex = mod(j + k - 1, RoundLength) + 1;
+            if round(currentIndex).position == 1
+                if mod(round(currentIndex).direction - 2, RoadCount) + 1 == currentIndex / SegmentLength
+                    roundGap(j) = inf;
+                else
+                    roundGap(j) = k - 1;
+                end
+                break
             end
-            for l = (k + 1):SegmentLength
-                if (round(j * SegmentLength + l).position == 1)
-                    roundGap(j * SegmentLength + k) = l - k - 1;
-                    break;
-                end
-                if l == SegmentLength
-                    roundGap(j * SegmentLength + k) = inf;
-                end
+            if k == RoundLength
+                roundGap(j) = inf;
             end
         end
     end
